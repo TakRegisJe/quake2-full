@@ -1,4 +1,7 @@
 ﻿C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(534,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  g_weapon.c
   p_weapon.c
+  Generating Code...
+C:\Users\Alexander Tochtchev\IT266\Quake2\quake2-full\game\g_weapon.c(479,68): warning C4100: 'plane': unreferenced parameter
      Creating library .\..\release\gamex86.lib and object .\..\release\gamex86.exp
   game.vcxproj -> C:\Program Files (x86)\Steam\steamapps\common\Quake 2\teleport-mod\gamex86.dll

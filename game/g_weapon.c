@@ -449,6 +449,30 @@ static void Grenade_Explode (edict_t *ent)
 	gi.WritePosition (origin);
 	gi.multicast (ent->s.origin, MULTICAST_PHS);
 
+	// LOGIC PARTIALLY COPIED FROM g_misc.c
+	if (ent->owner->client) {
+		edict_t* player;
+
+		player = ent->owner;
+		// unlink to make sure it can't possibly interfere with KillBox
+		gi.unlinkentity(player);
+
+		VectorCopy(ent->s.origin, player->s.origin);
+		VectorCopy(ent->s.origin, player->s.old_origin);
+		player->s.origin[2] += 10;
+
+		// clear the velocity and hold them in place briefly
+		VectorClear(player->velocity);
+
+		// draw the teleport splash on the player
+		player->s.event = EV_PLAYER_TELEPORT;
+
+		// kill anything at the destination
+		KillBox(player);
+
+		gi.linkentity(player);
+	}
+
 	G_FreeEdict (ent);
 }
 
