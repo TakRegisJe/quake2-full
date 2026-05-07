@@ -813,6 +813,8 @@ BLASTER / HYPERBLASTER
 ======================================================================
 */
 
+// MOD
+// Steel sword: regular speed, regular swing size, less damage against mutants/berserks/gladiators
 void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
 {
 	vec3_t	forward, right;
@@ -871,7 +873,7 @@ void Weapon_Blaster (edict_t *ent)
 	static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	Weapon_Generic (ent, 4, 20, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
 
@@ -959,6 +961,9 @@ MACHINEGUN / CHAINGUN
 
 ======================================================================
 */
+
+// MOD
+// Dagger: fast attack speed, low damage, small hitbox
 
 void Machinegun_Fire (edict_t *ent)
 {
@@ -1051,7 +1056,7 @@ void Weapon_Machinegun (edict_t *ent)
 	static int	pause_frames[]	= {23, 45, 0};
 	static int	fire_frames[]	= {4, 5, 0};
 
-	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
+	Weapon_Generic (ent, 3, 8, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
 }
 
 void Chaingun_Fire (edict_t *ent)
@@ -1191,6 +1196,8 @@ SHOTGUN / SUPERSHOTGUN
 ======================================================================
 */
 
+// MOD
+// Silver sword: same as steel sword, but extra damage against berserk, gladiator, mutant
 void weapon_shotgun_fire (edict_t *ent)
 {
 	vec3_t		start;
@@ -1240,9 +1247,9 @@ void weapon_shotgun_fire (edict_t *ent)
 void Weapon_Shotgun (edict_t *ent)
 {
 	static int	pause_frames[]	= {22, 28, 34, 0};
-	static int	fire_frames[]	= {8, 9, 0};
+	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 7, 18, 36, 39, pause_frames, fire_frames, weapon_shotgun_fire);
+	Weapon_Generic (ent, 4, 20, 52, 55, pause_frames, fire_frames, weapon_shotgun_fire);
 }
 
 
@@ -1357,13 +1364,16 @@ void weapon_railgun_fire (edict_t *ent)
 }
 
 
+// MOD
+// Broad sword: high attack, high damage, wide arch
 void Weapon_Railgun (edict_t *ent)
 {
 	static int	pause_frames[]	= {56, 0};
 	static int	fire_frames[]	= {4, 0};
 
-	Weapon_Generic (ent, 3, 18, 56, 61, pause_frames, fire_frames, weapon_railgun_fire);
+	Weapon_Generic (ent, 3, 48, 56, 61, pause_frames, fire_frames, weapon_railgun_fire);
 }
+// MOD-END
 
 
 /*
@@ -1374,6 +1384,8 @@ BFG10K
 ======================================================================
 */
 
+// MOD
+// Poleaxe: decent damage, slow attack, radius damage
 void weapon_bfg_fire (edict_t *ent)
 {
 	vec3_t	offset, start;
@@ -1435,9 +1447,9 @@ void weapon_bfg_fire (edict_t *ent)
 void Weapon_BFG (edict_t *ent)
 {
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
-	static int	fire_frames[]	= {9, 17, 0};
+	static int	fire_frames[]	= {9, 0};
 
-	Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_bfg_fire);
+	Weapon_Generic (ent, 4, 54, 55, 58, pause_frames, fire_frames, weapon_bfg_fire);
 }
 
 

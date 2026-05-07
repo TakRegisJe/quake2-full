@@ -274,9 +274,33 @@ Fires a single round.  Used for machinegun and chaingun.  Would be fine for
 pistols, rifles, etc....
 =================
 */
-void fire_bullet (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
+
+// MOD
+// Dagger
+void fire_bullet (edict_t *self, vec3_t oldstart, vec3_t aimdir, int olddamage, int kick, int hspread, int vspread, int mod)
 {
-	fire_lead (self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
+	vec3_t		start, end, forward, right, up;
+	vec3_t		mins = { -2, -2, -1 };
+	vec3_t		maxs = { 2, 2, 1 };
+	trace_t		tr;
+	int			damage = 5;
+
+	// Get aim vectors
+	if (self->client == NULL)
+		return;
+
+	gi.dprintf("Firing dagger\n");
+
+	AngleVectors(self->client->v_angle, forward, right, up);
+	VectorCopy(self->s.origin, start);
+	VectorMA(start, 40, forward, end);
+
+	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+	if (tr.ent && tr.ent->takedamage)
+	{
+		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+	}
 }
 
 
@@ -287,12 +311,44 @@ fire_shotgun
 Shoots shotgun pellets.  Used by shotgun and super shotgun.
 =================
 */
-void fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int count, int mod)
-{
-	int		i;
 
-	for (i = 0; i < count; i++)
-		fire_lead (self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
+// MOD
+// Silver sword
+void fire_shotgun (edict_t *self, vec3_t oldstart, vec3_t aimdir, int olddamage, int kick, int hspread, int vspread, int count, int mod)
+{
+	vec3_t		start, end, forward, right, up;
+	vec3_t		mins = { -5, -5, -3 };
+	vec3_t		maxs = { 5, 5, 3 };
+	trace_t		tr;
+	int			damage;
+
+	// Get aim vectors
+	if (self->client == NULL)
+		return;
+
+	gi.dprintf("Firing silver sword\n");
+
+	AngleVectors(self->client->v_angle, forward, right, up);
+	VectorCopy(self->s.origin, start);
+	VectorMA(start, 60, forward, end);
+
+	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+	if (tr.ent && tr.ent->takedamage)
+	{
+		if ((strcmp(tr.ent->classname, "monster_berserk") == 0) || (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
+		{
+			damage = 25;
+			gi.dprintf("Silver Sword hit monster\n");
+		}
+		else
+		{
+			damage = 5;
+			gi.dprintf("Silver Sword hit human\n");
+		}
+
+		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+	}
 }
 
 
@@ -342,50 +398,42 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	G_FreeEdict (self);
 }
 
-void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper)
+// MOD
+// Steel sword
+void fire_blaster (edict_t *self, vec3_t oldstart, vec3_t dir, int olddamage, int speed, int effect, qboolean hyper)
 {
-	edict_t	*bolt;
-	trace_t	tr;
+	vec3_t		start, end, forward, right, up;
+	vec3_t		mins = { -5, -5, -3 };
+	vec3_t		maxs = { 5, 5, 3 };
+	trace_t		tr;
+	int			damage;
 
-	VectorNormalize (dir);
+	// Get aim vectors
+	if (self->client == NULL)
+		return;
 
-	bolt = G_Spawn();
-	bolt->svflags = SVF_DEADMONSTER;
-	// yes, I know it looks weird that projectiles are deadmonsters
-	// what this means is that when prediction is used against the object
-	// (blaster/hyperblaster shots), the player won't be solid clipped against
-	// the object.  Right now trying to run into a firing hyperblaster
-	// is very jerky since you are predicted 'against' the shots.
-	VectorCopy (start, bolt->s.origin);
-	VectorCopy (start, bolt->s.old_origin);
-	vectoangles (dir, bolt->s.angles);
-	VectorScale (dir, speed, bolt->velocity);
-	bolt->movetype = MOVETYPE_FLYMISSILE;
-	bolt->clipmask = MASK_SHOT;
-	bolt->solid = SOLID_BBOX;
-	bolt->s.effects |= effect;
-	VectorClear (bolt->mins);
-	VectorClear (bolt->maxs);
-	bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
-	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
-	bolt->owner = self;
-	bolt->touch = blaster_touch;
-	bolt->nextthink = level.time + 2;
-	bolt->think = G_FreeEdict;
-	bolt->dmg = damage;
-	bolt->classname = "bolt";
-	if (hyper)
-		bolt->spawnflags = 1;
-	gi.linkentity (bolt);
+	gi.dprintf("Firing steel sword\n");
 
-	if (self->client)
-		check_dodge (self, bolt->s.origin, dir, speed);
+	AngleVectors(self->client->v_angle, forward, right, up);
+	VectorCopy(self->s.origin, start);
+	VectorMA(start, 60, forward, end);
 
-	tr = gi.trace (self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
-	if (tr.fraction < 1.0)
+	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+	if (tr.ent && tr.ent->takedamage)
 	{
-		VectorMA (bolt->s.origin, -10, dir, bolt->s.origin);
-		bolt->touch (bolt, tr.ent, NULL, NULL);
+		if ((strcmp(tr.ent->classname, "monster_berserk") == 0)|| (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
+		{
+			damage = 5;
+			gi.dprintf("Silver Sword hit monster\n");
+		}
+		else
+		{
+			damage = 20;
+			gi.dprintf("Silver Sword hit human\n");
+		}
+
+		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
 	}
 }	
 
@@ -655,63 +703,33 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 fire_rail
 =================
 */
-void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick)
+// MOD
+// Broadword
+void fire_rail(edict_t* self, vec3_t oldstart, vec3_t aimdir, int damage, int kick)
 {
-	vec3_t		from;
-	vec3_t		end;
+	vec3_t		start, end, forward, right, up;
+	vec3_t		mins = { -20, -20, -10 };
+	vec3_t		maxs = { 20, 20, 10 };
 	trace_t		tr;
-	edict_t		*ignore;
-	int			mask;
-	qboolean	water;
 
-	VectorMA (start, 8192, aimdir, end);
-	VectorCopy (start, from);
-	ignore = self;
-	water = false;
-	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
-	while (ignore)
+	// Get aim vectors
+	if (self->client == NULL)
+		return;
+
+	gi.dprintf("Firing broadsword\n");
+
+	AngleVectors(self->client->v_angle, forward, right, up);
+	VectorCopy(self->s.origin, start);
+	VectorMA(start, 80, forward, end);
+
+	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+	if (tr.ent && tr.ent->takedamage)
 	{
-		tr = gi.trace (from, NULL, NULL, end, ignore, mask);
-
-		if (tr.contents & (CONTENTS_SLIME|CONTENTS_LAVA))
-		{
-			mask &= ~(CONTENTS_SLIME|CONTENTS_LAVA);
-			water = true;
-		}
-		else
-		{
-			if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
-				ignore = tr.ent;
-			else
-				ignore = NULL;
-
-			if ((tr.ent != self) && (tr.ent->takedamage))
-				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
-		}
-
-		VectorCopy (tr.endpos, from);
+		gi.dprintf("Sword hit entity for %d\n", damage);
+		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_RAILGUN);
 	}
-
-	// send gun puff / flash
-	gi.WriteByte (svc_temp_entity);
-	gi.WriteByte (TE_RAILTRAIL);
-	gi.WritePosition (start);
-	gi.WritePosition (tr.endpos);
-	gi.multicast (self->s.origin, MULTICAST_PHS);
-//	gi.multicast (start, MULTICAST_PHS);
-	if (water)
-	{
-		gi.WriteByte (svc_temp_entity);
-		gi.WriteByte (TE_RAILTRAIL);
-		gi.WritePosition (start);
-		gi.WritePosition (tr.endpos);
-		gi.multicast (tr.endpos, MULTICAST_PHS);
-	}
-
-	if (self->client)
-		PlayerNoise(self, tr.endpos, PNOISE_IMPACT);
 }
-
 
 /*
 =================
@@ -879,38 +897,10 @@ void bfg_think (edict_t *self)
 }
 
 
+// MOD
+// Poleaxe
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius)
 {
-	edict_t	*bfg;
-
-	bfg = G_Spawn();
-	VectorCopy (start, bfg->s.origin);
-	VectorCopy (dir, bfg->movedir);
-	vectoangles (dir, bfg->s.angles);
-	VectorScale (dir, speed, bfg->velocity);
-	bfg->movetype = MOVETYPE_FLYMISSILE;
-	bfg->clipmask = MASK_SHOT;
-	bfg->solid = SOLID_BBOX;
-	bfg->s.effects |= EF_BFG | EF_ANIM_ALLFAST;
-	VectorClear (bfg->mins);
-	VectorClear (bfg->maxs);
-	bfg->s.modelindex = gi.modelindex ("sprites/s_bfg1.sp2");
-	bfg->owner = self;
-	bfg->touch = bfg_touch;
-	bfg->nextthink = level.time + 8000/speed;
-	bfg->think = G_FreeEdict;
-	bfg->radius_dmg = damage;
-	bfg->dmg_radius = damage_radius;
-	bfg->classname = "bfg blast";
-	bfg->s.sound = gi.soundindex ("weapons/bfg__l1a.wav");
-
-	bfg->think = bfg_think;
-	bfg->nextthink = level.time + FRAMETIME;
-	bfg->teammaster = bfg;
-	bfg->teamchain = NULL;
-
-	if (self->client)
-		check_dodge (self, bfg->s.origin, dir, speed);
-
-	gi.linkentity (bfg);
+	gi.dprintf("Striking with a poleaxe\n");
+	T_RadiusDamage(self, self, 100, self, 100, MOD_BLASTER);
 }
