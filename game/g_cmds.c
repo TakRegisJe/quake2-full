@@ -966,7 +966,7 @@ void AxiiSign(edict_t* ent)
 		{
 			gi.dprintf("Enemy charmed\n");
 			candidate = NULL;
-			while ((candidate = findradius(tr.ent, tr.ent->s.origin, 1024)) != NULL)
+			while ((candidate = findradius(candidate, tr.ent->s.origin, 1024)) != NULL)
 			{
 				if (candidate == tr.ent)
 					continue;
