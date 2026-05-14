@@ -899,6 +899,237 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+// MODS: SIGNS
+
+/*
+=================
+MOD: Quen
+=================
+*/
+void QuenSign(edict_t* ent)
+{
+	if (ent->client->quenEndCD > level.time)
+	{
+		gi.dprintf("Quen on Cooldown\n");
+		return;
+	}
+	else
+	{
+		int index;
+		gi.dprintf("Quen Sing\n");
+		index = ArmorIndex(ent);
+		if (!index)
+			return;
+
+		ent->client->pers.inventory[index] += 2;
+
+		gi.dprintf("Armor added\n");
+
+		ent->client->quenEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Axii
+=================
+*/
+void AxiiSign(edict_t* ent)
+{
+	if (ent->client->axiiEndCD > level.time)
+	{
+		gi.dprintf("Axii on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+		vec3_t mins = { -4,-4,-4 };
+		vec3_t maxs = { 4,4,4 };
+		edict_t* candidate = NULL;
+		edict_t* nearest = NULL;
+		float bestDist = 9999999;
+		float dist;
+		vec3_t delta;
+
+		gi.dprintf("Axii Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			gi.dprintf("Enemy charmed\n");
+			candidate = NULL;
+			while ((candidate = findradius(tr.ent, tr.ent->s.origin, 1024)) != NULL)
+			{
+				if (candidate == tr.ent)
+					continue;
+				if (!(candidate->svflags & SVF_MONSTER))
+					continue;
+				if (candidate->health <= 0)
+					continue;
+				
+				VectorSubtract(candidate->s.origin, tr.ent->s.origin, delta);
+				dist = VectorLength(delta);
+				if (dist < bestDist)
+				{
+					bestDist = dist;
+					nearest = candidate;
+				}
+			}
+
+			tr.ent->monsterinfo.aiflags |= AI_GOOD_GUY;
+
+			if (nearest)
+			{
+				tr.ent->enemy = nearest;
+				gi.dprintf("Charmed, now target ally\n");
+			}
+			else
+			{
+				tr.ent->monsterinfo.attack_finished = level.time + 10;
+				tr.ent->monsterinfo.pausetime = level.time + 10;
+				gi.dprintf("Charmed, no targets\n");
+			}
+			
+		}
+
+		ent->client->axiiEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Igni
+=================
+*/
+void IgniSign(edict_t* ent)
+{
+	if (ent->client->igniEndCD > level.time)
+	{
+		gi.dprintf("Igni on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+		vec3_t mins = { -4,-4,-4 };
+		vec3_t maxs = { 4,4,4 };
+
+		gi.dprintf("Igni Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			tr.ent->monsterinfo.isBurning = 1;
+			tr.ent->monsterinfo.burnEndTime = level.time + 5;
+			gi.dprintf("Enemy set on fire\n");
+		}
+
+		ent->client->igniEndCD = level.time + 5;
+	}
+}
+
+/*
+=================
+MOD: Yrden
+=================
+*/
+void YrdenSign(edict_t* ent)
+{
+	if (ent->client->yrdenEndCD > level.time)
+	{
+		gi.dprintf("Yrden on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+		vec3_t mins = { -4,-4,-4 };
+		vec3_t maxs = { 4,4,4 };
+
+		gi.dprintf("Yrden Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			tr.ent->nextthink = level.time + 5.0;
+			VectorClear(tr.ent->velocity);
+			gi.dprintf("Enemy trapped\n");
+		}
+
+		ent->client->yrdenEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Aard
+=================
+*/
+void AardSign(edict_t* ent)
+{
+	if (ent->client->aardEndCD > level.time)
+	{
+		gi.dprintf("Aard on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+		vec3_t mins = { -4,-4,-4 };
+		vec3_t maxs = { 4,4,4 };
+
+		gi.dprintf("Aard Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			vec3_t  dir, kvel;
+			float   mass;
+
+			VectorSubtract(tr.ent->s.origin, ent->s.origin, dir);
+			VectorNormalize(dir);
+
+			if (tr.ent->mass < 50)
+				mass = 50;
+			else
+				mass = tr.ent->mass;
+
+			VectorScale(dir, 500.0 * (float)200 / mass, kvel);
+			VectorAdd(tr.ent->velocity, kvel, tr.ent->velocity);
+		}
+
+		ent->client->aardEndCD = level.time + 5;
+	}
+}
+
 
 /*
 =================
@@ -999,192 +1230,4 @@ void ClientCommand (edict_t *ent)
 		AardSign(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
-}
-
-
-// MODS: SIGNS
-
-/*
-=================
-MOD: Quen
-=================
-*/
-void QuenSign(edict_t *ent)
-{
-	if (ent->client->quenEndCD > level.time)
-	{
-		gi.dprintf("Quen on Cooldown\n");
-		return;
-	}
-	else
-	{
-		int index;
-		gi.dprintf("Quen Sing\n");
-		index = ArmorIndex(ent);
-		if (!index)
-			return;
-
-		ent->client->pers.inventory[index] += 2;
-
-		gi.dprintf("Armor added\n");
-
-		ent->client->quenEndCD = level.time + 5;
-	}
-}
-
-
-/*
-=================
-MOD: Axii
-=================
-*/
-void AxiiSign(edict_t *ent)
-{
-	if (ent->client->axiiEndCD > level.time)
-	{
-		gi.dprintf("Axii on Cooldown\n");
-		return;
-	}
-	else
-	{
-		trace_t tr;
-		vec3_t  forward, start, end;
-
-		gi.dprintf("Axii Sign\n");
-
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->s.origin, start);
-		VectorMA(start, 1024, forward, end);
-
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-
-		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
-		{
-			tr.ent->monsterinfo.aiflags |= AI_GOOD_GUY;
-			tr.ent->enemy = NULL;
-			gi.dprintf("Enemy charmed\n");
-		}
-
-		ent->client->axiiEndCD = level.time + 5;
-	}
-}
-
-
-/*
-=================
-MOD: Igni
-=================
-*/
-void IgniSign(edict_t *ent)
-{
-	if (ent->client->igniEndCD > level.time)
-	{
-		gi.dprintf("Igni on Cooldown\n");
-		return;
-	}
-	else
-	{
-		trace_t tr;
-		vec3_t  forward, start, end;
-
-		gi.dprintf("Igni Sign\n");
-
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->s.origin, start);
-		VectorMA(start, 1024, forward, end);
-
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-
-		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
-		{
-			tr.ent->monsterinfo.isBurning = 1;
-			tr.ent->monsterinfo.burnEndTime = level.time + 5;
-			gi.dprintf("Enemy set on fire\n");
-		}
-
-		ent->client->igniEndCD = level.time + 5;
-	}
-}
-
-/*
-=================
-MOD: Yrden
-=================
-*/
-void YrdenSign(edict_t *ent)
-{
-	if (ent->client->yrdenEndCD > level.time)
-	{
-		gi.dprintf("Yrden on Cooldown\n");
-		return;
-	}
-	else
-	{
-		trace_t tr;
-		vec3_t  forward, start, end;
-
-		gi.dprintf("Yrden Sign\n");
-
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->s.origin, start);
-		VectorMA(start, 1024, forward, end);
-
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-
-		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
-		{
-			tr.ent->nextthink = level.time + 5.0;
-			VectorClear(tr.ent->velocity);
-			gi.dprintf("Enemy trapped\n");
-		}
-
-		ent->client->yrdenEndCD = level.time + 5;
-	}
-}
-
-
-/*
-=================
-MOD: Aard
-=================
-*/
-void AardSign(edict_t *ent)
-{
-	if (ent->client->aardEndCD > level.time)
-	{
-		gi.dprintf("Aard on Cooldown\n");
-		return;
-	}
-	else
-	{
-		trace_t tr;
-		vec3_t  forward, start, end;
-
-		gi.dprintf("Aard Sign\n");
-
-		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
-		VectorCopy(ent->s.origin, start);
-		VectorMA(start, 1024, forward, end);
-
-		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
-
-		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
-		{
-			vec3_t  dir, kvel;
-			float   mass;
-
-			VectorSubtract(tr.ent->s.origin, ent->s.origin, dir);
-			VectorNormalize(dir);
-
-			if (tr.ent->mass < 50)
-				mass = 50;
-			else
-				mass = tr.ent->mass;
-
-			VectorScale(dir, 500.0 * (float)200 / mass, kvel);
-			VectorAdd(tr.ent->velocity, kvel, tr.ent->velocity);
-		}
-
-		ent->client->aardEndCD = level.time + 5;
-	}
 }

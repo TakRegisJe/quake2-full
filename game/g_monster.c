@@ -421,7 +421,7 @@ void monster_think (edict_t *self)
 	if (self->monsterinfo.isBurning != 0 && level.time < self->monsterinfo.burnEndTime)
 	{
 		gi.dprintf("I am on fire\n");
-		self->health -= 5;
+		T_Damage(self, world, world, vec3_origin, self->s.origin, vec3_origin, 2, 0, DAMAGE_NO_ARMOR, MOD_UNKNOWN);
 	}
 	M_MoveFrame (self);
 	if (self->linkcount != self->monsterinfo.linkcount)
