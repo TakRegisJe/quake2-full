@@ -416,7 +416,7 @@ void fire_blaster (edict_t *self, vec3_t oldstart, vec3_t dir, int olddamage, in
 
 		VectorNormalize(dir);
 		bolt = G_Spawn();
-		bolt->svflags = SVF_PROJECTILE;
+		bolt->svflags = SVF_DEADMONSTER;
 		VectorCopy(oldstart, bolt->s.origin);
 		VectorCopy(oldstart, bolt->s.old_origin);
 		vectoangles(dir, bolt->s.angles);

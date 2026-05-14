@@ -15,7 +15,6 @@ c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_main.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_items.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_func.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_combat.obj
-c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_cmds.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_chase.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_ai.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\m_soldier.obj
@@ -46,6 +45,7 @@ c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\p_hud.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\p_client.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\m_tank.obj
 c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\m_supertank.obj
+c:\users\alexander tochtchev\it266\quake2\quake2-full\game\release\g_cmds.obj
 c:\program files (x86)\steam\steamapps\common\quake 2\witcherquake\gamex86.dll
 c:\users\alexander tochtchev\it266\quake2\quake2-full\release\gamex86.lib
 c:\users\alexander tochtchev\it266\quake2\quake2-full\release\gamex86.exp

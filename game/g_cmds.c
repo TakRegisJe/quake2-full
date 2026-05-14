@@ -916,12 +916,12 @@ void QuenSign(edict_t* ent)
 	else
 	{
 		int index;
-		gi.dprintf("Quen Sing\n");
+		gi.dprintf("Quen Sign\n");
 		index = ArmorIndex(ent);
 		if (!index)
-			return;
-
-		ent->client->pers.inventory[index] += 2;
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Jacket Armor"))] = 10;
+		else 
+			ent->client->pers.inventory[index] += 10;
 
 		gi.dprintf("Armor added\n");
 
