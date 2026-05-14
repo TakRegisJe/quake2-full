@@ -418,6 +418,11 @@ void M_MoveFrame (edict_t *self)
 
 void monster_think (edict_t *self)
 {
+	if (self->monsterinfo.isBurning != 0 && level.time < self->monsterinfo.burnEndTime)
+	{
+		gi.dprintf("I am on fire\n");
+		self->health -= 5;
+	}
 	M_MoveFrame (self);
 	if (self->linkcount != self->monsterinfo.linkcount)
 	{

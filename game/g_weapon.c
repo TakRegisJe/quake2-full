@@ -425,12 +425,12 @@ void fire_blaster (edict_t *self, vec3_t oldstart, vec3_t dir, int olddamage, in
 		if ((strcmp(tr.ent->classname, "monster_berserk") == 0)|| (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
 		{
 			damage = 5;
-			gi.dprintf("Silver Sword hit monster\n");
+			gi.dprintf("Steel Sword hit monster\n");
 		}
 		else
 		{
 			damage = 20;
-			gi.dprintf("Silver Sword hit human\n");
+			gi.dprintf("Steel Sword hit human\n");
 		}
 
 		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);

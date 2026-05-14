@@ -831,13 +831,6 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 10, effect, hyper);
-
-	start[0] += right[0] * 10;
-	start[1] += right[1] * 10;
-	start[2] += right[2] * 10;
-	fire_blaster(ent, start, forward, damage, 10, effect, hyper);
-
 	start[0] -= right[0] * 20;
 	start[1] -= right[1] * 20;
 	start[2] -= right[2] * 20;
@@ -1447,7 +1440,7 @@ void weapon_bfg_fire (edict_t *ent)
 void Weapon_BFG (edict_t *ent)
 {
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
-	static int	fire_frames[]	= {9, 0};
+	static int	fire_frames[]	= {7, 0};
 
 	Weapon_Generic (ent, 4, 54, 55, 58, pause_frames, fire_frames, weapon_bfg_fire);
 }

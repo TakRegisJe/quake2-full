@@ -445,6 +445,11 @@ typedef struct
 
 	int			power_armor_type;
 	int			power_armor_power;
+
+	// MOD
+	// Burn effect
+	int			isBurning;
+	float		burnEndTime;
 } monsterinfo_t;
 
 
@@ -959,6 +964,14 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	// MOD
+	// Sign Cooldowns
+	float	quenEndCD;
+	float	axiiEndCD;
+	float	igniEndCD;
+	float	aardEndCD;
+	float	yrdenEndCD;
 };
 
 

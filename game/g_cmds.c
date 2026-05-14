@@ -987,6 +987,204 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "quen") == 0)	// q
+		QuenSign(ent);
+	else if (Q_stricmp(cmd, "axii") == 0)	// r
+		AxiiSign(ent);
+	else if (Q_stricmp(cmd, "igni") == 0)	// t
+		IgniSign(ent);
+	else if (Q_stricmp(cmd, "yrden") == 0)	// y
+		YrdenSign(ent);
+	else if (Q_stricmp(cmd, "aard") == 0)	// u
+		AardSign(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
+}
+
+
+// MODS: SIGNS
+
+/*
+=================
+MOD: Quen
+=================
+*/
+void QuenSign(edict_t *ent)
+{
+	if (ent->client->quenEndCD > level.time)
+	{
+		gi.dprintf("Quen on Cooldown\n");
+		return;
+	}
+	else
+	{
+		int index;
+		gi.dprintf("Quen Sing\n");
+		index = ArmorIndex(ent);
+		if (!index)
+			return;
+
+		ent->client->pers.inventory[index] += 2;
+
+		gi.dprintf("Armor added\n");
+
+		ent->client->quenEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Axii
+=================
+*/
+void AxiiSign(edict_t *ent)
+{
+	if (ent->client->axiiEndCD > level.time)
+	{
+		gi.dprintf("Axii on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+
+		gi.dprintf("Axii Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			tr.ent->monsterinfo.aiflags |= AI_GOOD_GUY;
+			tr.ent->enemy = NULL;
+			gi.dprintf("Enemy charmed\n");
+		}
+
+		ent->client->axiiEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Igni
+=================
+*/
+void IgniSign(edict_t *ent)
+{
+	if (ent->client->igniEndCD > level.time)
+	{
+		gi.dprintf("Igni on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+
+		gi.dprintf("Igni Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			tr.ent->monsterinfo.isBurning = 1;
+			tr.ent->monsterinfo.burnEndTime = level.time + 5;
+			gi.dprintf("Enemy set on fire\n");
+		}
+
+		ent->client->igniEndCD = level.time + 5;
+	}
+}
+
+/*
+=================
+MOD: Yrden
+=================
+*/
+void YrdenSign(edict_t *ent)
+{
+	if (ent->client->yrdenEndCD > level.time)
+	{
+		gi.dprintf("Yrden on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+
+		gi.dprintf("Yrden Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			tr.ent->nextthink = level.time + 5.0;
+			VectorClear(tr.ent->velocity);
+			gi.dprintf("Enemy trapped\n");
+		}
+
+		ent->client->yrdenEndCD = level.time + 5;
+	}
+}
+
+
+/*
+=================
+MOD: Aard
+=================
+*/
+void AardSign(edict_t *ent)
+{
+	if (ent->client->aardEndCD > level.time)
+	{
+		gi.dprintf("Aard on Cooldown\n");
+		return;
+	}
+	else
+	{
+		trace_t tr;
+		vec3_t  forward, start, end;
+
+		gi.dprintf("Aard Sign\n");
+
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorCopy(ent->s.origin, start);
+		VectorMA(start, 1024, forward, end);
+
+		tr = gi.trace(start, NULL, NULL, end, ent, MASK_SHOT);
+
+		if (tr.ent && (tr.ent->svflags & SVF_MONSTER) && tr.ent->health > 0)
+		{
+			vec3_t  dir, kvel;
+			float   mass;
+
+			VectorSubtract(tr.ent->s.origin, ent->s.origin, dir);
+			VectorNormalize(dir);
+
+			if (tr.ent->mass < 50)
+				mass = 50;
+			else
+				mass = tr.ent->mass;
+
+			VectorScale(dir, 500.0 * (float)200 / mass, kvel);
+			VectorAdd(tr.ent->velocity, kvel, tr.ent->velocity);
+		}
+
+		ent->client->aardEndCD = level.time + 5;
+	}
 }
