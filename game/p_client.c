@@ -1642,6 +1642,24 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			ent->velocity[i] = pm.s.velocity[i]*0.125;
 		}
 
+		// MOD
+		// Speed boost
+		if (ent->client->speedBoostCD > level.time)
+		{
+			ent->velocity[0] *= 1.5;
+			ent->velocity[1] *= 1.5;
+		}
+
+		// MOD
+		// Jump boost
+		if (ent->client->jumpBoostCD > level.time)
+		{
+			if (ent->velocity[2] > 0 && ent->client->oldvelocity[2] <= 0)
+			{
+				ent->velocity[2] *= 1.5;
+			}
+		}
+
 		VectorCopy (pm.mins, ent->mins);
 		VectorCopy (pm.maxs, ent->maxs);
 

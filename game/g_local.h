@@ -972,6 +972,11 @@ struct gclient_s
 	float	igniEndCD;
 	float	aardEndCD;
 	float	yrdenEndCD;
+
+	// Movement Cooldowns
+	float	speedBoostCD;
+	float	jumpBoostCD;
+	float	dashCD;	
 };
 
 

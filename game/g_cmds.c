@@ -1130,6 +1130,111 @@ void AardSign(edict_t* ent)
 	}
 }
 
+/*
+=================
+MOD: Forward Dash
+=================
+*/
+void ForwardDash (edict_t *ent)
+{
+	vect3_t forward;
+
+	if (ent->client->dashCD > level.time)
+	{
+		gi.dprintf("Forward Dash on Cooldown\n");
+		return;
+	}
+	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+
+	forward[2] = 0;
+	VectorNormalize(forward);
+
+	ent->velocity[0] = forward[0] * 800;
+	ent->velocity[1] = forward[1] * 800;
+
+	ent->client->invincible_framenum = level.framenum + 30;
+
+	ent->client->dashCD = level.time + 5;
+}
+
+/*
+=================
+MOD: Left Dash
+=================
+*/
+void LeftDash (edict_t *ent)
+{
+	vect3_t right;
+
+	if (ent->client->dashCD > level.time)
+	{
+		gi.dprintf("Left Dash on Cooldown\n");
+		return;
+	}
+	AngleVectors(ent->client->v_angle, NULL, right, NULL);
+
+	right[2] = 0;
+	VectorNormalize(right);
+
+	ent->velocity[0] = -right[0] * 800;
+	ent->velocity[1] = -right[1] * 800;
+
+	ent->client->invincible_framenum = level.framenum + 30;
+
+	ent->client->dashCD = level.time + 5;
+}
+
+/*
+=================
+MOD: Right Dash
+=================
+*/
+void RightDash (edict_t *ent)
+{
+	vect3_t right;
+	
+	if (ent->client->dashCD > level.time)
+	{
+		gi.dprintf("Right Dash on Cooldown\n");
+		return;
+	}
+	AngleVectors(ent->client->v_angle, NULL, right, NULL);
+
+	right[2] = 0;
+	VectorNormalize(right);
+
+	ent->velocity[0] = right[0] * 800;
+	ent->velocity[1] = right[1] * 800;
+
+	ent->client->invincible_framenum = level.framenum + 30;
+
+	ent->client->dashCD = level.time + 5;
+}
+
+/*
+=================
+MOD: Long Dash
+=================
+*/
+void LongDash (edict_t *ent)
+{
+	vect3_t forward;
+
+	if (ent->client->dashCD > level.time)
+	{
+		gi.dprintf("Long Dash on Cooldown\n");
+		return;
+	}
+	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+
+	forward[2] = 0;
+	VectorNormalize(forward);
+
+	ent->velocity[0] = forward[0] * 1600;
+	ent->velocity[1] = forward[1] * 1600;
+
+	ent->client->dashCD = level.time + 7;
+}
 
 /*
 =================
@@ -1228,6 +1333,18 @@ void ClientCommand (edict_t *ent)
 		YrdenSign(ent);
 	else if (Q_stricmp(cmd, "aard") == 0)	// u
 		AardSign(ent);
+	else if (Q_stricmp(cmd, "forward_dash") == 0)	// /
+		ForwardDash(ent);
+	else if (Q_stricmp(cmd, "left_dash") == 0)	// ,
+		LeftDash(ent);
+	else if (Q_stricmp(cmd, "right_dash") == 0)	// .
+		RightDash(ent);
+	else if (Q_stricmp(cmd, "long_dash") == 0)	// e
+		LongDash(ent);
+	else if (Q_stricmp(cmd, "speed_boost") == 0)	// i
+		ent->client->speedBoostCD = level.time + 10;
+	else if (Q_stricmp(cmd, "jump_boost") == 0)	// o
+		ent->client->jumpBoostCD = level.time + 10;;
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
