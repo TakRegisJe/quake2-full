@@ -276,30 +276,32 @@ pistols, rifles, etc....
 */
 
 // MOD
-// Dagger
+// Dagger (player) / original bullet (monsters)
 void fire_bullet (edict_t *self, vec3_t oldstart, vec3_t aimdir, int olddamage, int kick, int hspread, int vspread, int mod)
 {
-	vec3_t		start, end, forward, right, up;
-	vec3_t		mins = { -2, -2, -1 };
-	vec3_t		maxs = { 2, 2, 1 };
-	trace_t		tr;
-	int			damage = 5;
-
-	// Get aim vectors
 	if (self->client == NULL)
-		return;
-
-	gi.dprintf("Firing dagger\n");
-
-	AngleVectors(self->client->v_angle, forward, right, up);
-	VectorCopy(self->s.origin, start);
-	VectorMA(start, 40, forward, end);
-
-	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
-
-	if (tr.ent && tr.ent->takedamage)
 	{
-		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+		fire_lead (self, oldstart, aimdir, olddamage, kick, TE_GUNSHOT, hspread, vspread, mod);
+		return;
+	}
+
+	{
+		vec3_t		start, end, forward, right, up;
+		vec3_t		mins = { -2, -2, -1 };
+		vec3_t		maxs = { 2, 2, 1 };
+		trace_t		tr;
+		int			damage = 5;
+
+		gi.dprintf("Firing dagger\n");
+
+		AngleVectors(self->client->v_angle, forward, right, up);
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 40, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+		if (tr.ent && tr.ent->takedamage)
+			T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
 	}
 }
 
@@ -313,41 +315,46 @@ Shoots shotgun pellets.  Used by shotgun and super shotgun.
 */
 
 // MOD
-// Silver sword
+// Silver sword (player) / original shotgun (monsters)
 void fire_shotgun (edict_t *self, vec3_t oldstart, vec3_t aimdir, int olddamage, int kick, int hspread, int vspread, int count, int mod)
 {
-	vec3_t		start, end, forward, right, up;
-	vec3_t		mins = { -5, -5, -3 };
-	vec3_t		maxs = { 5, 5, 3 };
-	trace_t		tr;
-	int			damage;
-
-	// Get aim vectors
 	if (self->client == NULL)
-		return;
-
-	gi.dprintf("Firing silver sword\n");
-
-	AngleVectors(self->client->v_angle, forward, right, up);
-	VectorCopy(self->s.origin, start);
-	VectorMA(start, 60, forward, end);
-
-	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
-
-	if (tr.ent && tr.ent->takedamage)
 	{
-		if ((strcmp(tr.ent->classname, "monster_berserk") == 0) || (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
-		{
-			damage = 25;
-			gi.dprintf("Silver Sword hit monster\n");
-		}
-		else
-		{
-			damage = 5;
-			gi.dprintf("Silver Sword hit human\n");
-		}
+		int i;
+		for (i = 0; i < count; i++)
+			fire_lead (self, oldstart, aimdir, olddamage, kick, TE_SHOTGUN, hspread, vspread, mod);
+		return;
+	}
 
-		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+	{
+		vec3_t		start, end, forward, right, up;
+		vec3_t		mins = { -5, -5, -3 };
+		vec3_t		maxs = { 5, 5, 3 };
+		trace_t		tr;
+		int			damage;
+
+		gi.dprintf("Firing silver sword\n");
+
+		AngleVectors(self->client->v_angle, forward, right, up);
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 60, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+		if (tr.ent && tr.ent->takedamage)
+		{
+			if ((strcmp(tr.ent->classname, "monster_berserk") == 0) || (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
+			{
+				damage = 25;
+				gi.dprintf("Silver Sword hit monster\n");
+			}
+			else
+			{
+				damage = 5;
+				gi.dprintf("Silver Sword hit human\n");
+			}
+			T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+		}
 	}
 }
 
@@ -399,41 +406,77 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 }
 
 // MOD
-// Steel sword
+// Steel sword (player) / original blaster projectile (monsters)
 void fire_blaster (edict_t *self, vec3_t oldstart, vec3_t dir, int olddamage, int speed, int effect, qboolean hyper)
 {
-	vec3_t		start, end, forward, right, up;
-	vec3_t		mins = { -5, -5, -3 };
-	vec3_t		maxs = { 5, 5, 3 };
-	trace_t		tr;
-	int			damage;
-
-	// Get aim vectors
 	if (self->client == NULL)
-		return;
-
-	gi.dprintf("Firing steel sword\n");
-
-	AngleVectors(self->client->v_angle, forward, right, up);
-	VectorCopy(self->s.origin, start);
-	VectorMA(start, 60, forward, end);
-
-	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
-
-	if (tr.ent && tr.ent->takedamage)
 	{
-		if ((strcmp(tr.ent->classname, "monster_berserk") == 0)|| (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
-		{
-			damage = 5;
-			gi.dprintf("Steel Sword hit monster\n");
-		}
-		else
-		{
-			damage = 20;
-			gi.dprintf("Steel Sword hit human\n");
-		}
+		edict_t	*bolt;
+		trace_t	tr;
 
-		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+		VectorNormalize(dir);
+		bolt = G_Spawn();
+		bolt->svflags = SVF_PROJECTILE;
+		VectorCopy(oldstart, bolt->s.origin);
+		VectorCopy(oldstart, bolt->s.old_origin);
+		vectoangles(dir, bolt->s.angles);
+		VectorScale(dir, speed, bolt->velocity);
+		bolt->movetype = MOVETYPE_FLYMISSILE;
+		bolt->clipmask = MASK_SHOT;
+		bolt->solid = SOLID_BBOX;
+		bolt->s.effects |= effect;
+		VectorClear(bolt->mins);
+		VectorClear(bolt->maxs);
+		bolt->s.modelindex = gi.modelindex("models/objects/laser/tris.md2");
+		bolt->s.sound = gi.soundindex("misc/lasfly.wav");
+		bolt->owner = self;
+		bolt->touch = blaster_touch;
+		bolt->nextthink = level.time + 2;
+		bolt->think = G_FreeEdict;
+		bolt->dmg = olddamage;
+		bolt->classname = "bolt";
+		if (hyper)
+			bolt->spawnflags = 1;
+		gi.linkentity(bolt);
+
+		tr = gi.trace(self->s.origin, NULL, NULL, bolt->s.origin, bolt, MASK_SHOT);
+		if (tr.fraction < 1.0)
+		{
+			VectorMA(bolt->s.origin, -10, dir, bolt->s.origin);
+			bolt->touch(bolt, tr.ent, NULL, NULL);
+		}
+		return;
+	}
+
+	{
+		vec3_t		start, end, forward, right, up;
+		vec3_t		mins = { -5, -5, -3 };
+		vec3_t		maxs = { 5, 5, 3 };
+		trace_t		tr;
+		int			damage;
+
+		gi.dprintf("Firing steel sword\n");
+
+		AngleVectors(self->client->v_angle, forward, right, up);
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 60, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+		if (tr.ent && tr.ent->takedamage)
+		{
+			if ((strcmp(tr.ent->classname, "monster_berserk") == 0) || (strcmp(tr.ent->classname, "monster_gladiator") == 0) || (strcmp(tr.ent->classname, "monster_mutant") == 0))
+			{
+				damage = 5;
+				gi.dprintf("Steel Sword hit monster\n");
+			}
+			else
+			{
+				damage = 20;
+				gi.dprintf("Steel Sword hit human\n");
+			}
+			T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_BLASTER);
+		}
 	}
 }	
 
@@ -704,30 +747,63 @@ fire_rail
 =================
 */
 // MOD
-// Broadword
+// Broadsword (player) / original railgun (monsters)
 void fire_rail(edict_t* self, vec3_t oldstart, vec3_t aimdir, int damage, int kick)
 {
-	vec3_t		start, end, forward, right, up;
-	vec3_t		mins = { -20, -20, -10 };
-	vec3_t		maxs = { 20, 20, 10 };
-	trace_t		tr;
-
-	// Get aim vectors
 	if (self->client == NULL)
-		return;
-
-	gi.dprintf("Firing broadsword\n");
-
-	AngleVectors(self->client->v_angle, forward, right, up);
-	VectorCopy(self->s.origin, start);
-	VectorMA(start, 80, forward, end);
-
-	tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
-
-	if (tr.ent && tr.ent->takedamage)
 	{
-		gi.dprintf("Sword hit entity for %d\n", damage);
-		T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_RAILGUN);
+		vec3_t		from, end;
+		trace_t		tr;
+		edict_t		*ignore;
+		int			mask;
+		qboolean	water;
+
+		VectorMA(oldstart, 8192, aimdir, end);
+		VectorCopy(oldstart, from);
+		ignore = self;
+		water = false;
+		mask = MASK_SHOT | CONTENTS_SLIME | CONTENTS_LAVA;
+		while (ignore)
+		{
+			tr = gi.trace(from, NULL, NULL, end, ignore, mask);
+			if (tr.contents & (CONTENTS_SLIME | CONTENTS_LAVA))
+			{
+				mask &= ~(CONTENTS_SLIME | CONTENTS_LAVA);
+				water = true;
+			}
+			else
+			{
+				if ((tr.ent->svflags & SVF_MONSTER) || (tr.ent->client))
+					ignore = tr.ent;
+				else
+					ignore = NULL;
+				if ((tr.ent != self) && (tr.ent->takedamage))
+					T_Damage(tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, 0, MOD_RAILGUN);
+			}
+			VectorCopy(tr.endpos, from);
+		}
+		return;
+	}
+
+	{
+		vec3_t		start, end, forward, right, up;
+		vec3_t		mins = { -20, -20, -10 };
+		vec3_t		maxs = { 20, 20, 10 };
+		trace_t		tr;
+
+		gi.dprintf("Firing broadsword\n");
+
+		AngleVectors(self->client->v_angle, forward, right, up);
+		VectorCopy(self->s.origin, start);
+		VectorMA(start, 80, forward, end);
+
+		tr = gi.trace(start, mins, maxs, end, self, MASK_SHOT);
+
+		if (tr.ent && tr.ent->takedamage)
+		{
+			gi.dprintf("Sword hit entity for %d\n", damage);
+			T_Damage(tr.ent, self, self, forward, tr.endpos, tr.plane.normal, damage, 0, 0, MOD_RAILGUN);
+		}
 	}
 }
 
