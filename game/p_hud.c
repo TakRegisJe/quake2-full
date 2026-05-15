@@ -380,6 +380,10 @@ void G_SetStats (edict_t *ent)
 	int			index, cells;
 	int			power_armor_type;
 
+	//MOD
+	float t = level.time;
+	gclient_t *client = ent->client;
+
 	//
 	// health
 	//
@@ -472,6 +476,15 @@ void G_SetStats (edict_t *ent)
 		ent->client->ps.stats[STAT_TIMER] = 0;
 	}
 
+	// MOD set timer cooldowns
+	client->ps.stats[STAT_QUEN_CD] = (client->quenEndCD > t) ? (short)(client->quenEndCD - t) : 0;
+	client->ps.stats[STAT_AXII_CD] = (client->axiiEndCD > t) ? (short)(client->axiiEndCD - t) : 0;
+	client->ps.stats[STAT_IGNI_CD] = (client->igniEndCD > t) ? (short)(client->igniEndCD - t) : 0;
+	client->ps.stats[STAT_YRDEN_CD] = (client->yrdenEndCD > t) ? (short)(client->yrdenEndCD - t) : 0;
+	client->ps.stats[STAT_AARD_CD] = (client->aardEndCD > t) ? (short)(client->aardEndCD - t) : 0;
+	client->ps.stats[STAT_DASH_CD] = (client->dashCD > t) ? (short)(client->dashCD - t) : 0;
+
+
 	//
 	// selected item
 	//
@@ -486,6 +499,13 @@ void G_SetStats (edict_t *ent)
 	// layouts
 	//
 	ent->client->ps.stats[STAT_LAYOUTS] = 0;
+
+	if (ent->client->pers.health > 0 && !level.intermissiontime 
+		&& !ent->client->showscores && !ent->client->showhelp 
+		&& !ent->client->showinventory)
+	{
+		ent->client->ps.stats[STAT_LAYOUTS] |= 1;
+	}
 
 	if (deathmatch->value)
 	{
@@ -567,5 +587,86 @@ void G_SetSpectatorStats (edict_t *ent)
 			(cl->chase_target - g_edicts) - 1;
 	else
 		cl->ps.stats[STAT_CHASE] = 0;
+}
+
+  
+/*
+===============
+MOD: Help screen
+===============
+*/
+void ControlScreen(edict_t *ent)         
+  {
+      char string[1400];
+      Com_sprintf(string, sizeof(string),
+          "xl 16 yt 8  string2 \"== WitcherQuake Controls ==\" "
+          "xl 16 yt 28 string \"--- Signs ---\" "
+          "xl 16 yt 38 string \"Q    Quen  (restore armor)\" "
+          "xl 16 yt 46 string \"R    Axii  (charm enemy)\" "
+          "xl 16 yt 54 string \"T    Igni  (burn enemy)\" "
+          "xl 16 yt 62 string \"Y    Yrden (freeze enemy)\" "
+          "xl 16 yt 70 string \"U    Aard  (knockback)\" "
+          "xl 16 yt 88 string \"--- Movement ---\" "
+          "xl 16 yt 98 string \"/    Forward Dash\" "
+          "xl 16 yt 106 string \",    Left Dash\" "
+          "xl 16 yt 114 string \".    Right Dash\" "
+          "xl 16 yt 122 string \"E    Long Dash\" "
+          "xl 16 yt 132 string \"I    Speed Boost\" "
+          "xl 16 yt 140 string \"O    Jump Boost\" "
+      );
+
+      gi.WriteByte(svc_layout);
+      gi.WriteString(string);
+      gi.unicast(ent, true);
+  } 
+
+/*
+===============
+MOD: Command handler
+===============
+*/
+void Cmd_ControlScreen_f(edict_t *ent)
+{
+	ent->client->showinventory = false;
+	ent->client->showscores = false;
+	ent->client->showhelp = false;
+
+	if (ent->client->showcontrols)
+	{
+		ent->client->showcontrols = false;
+		return;
+	}
+	
+	ent->client->showcontrols = true;
+	ControlScreen(ent);
+}
+
+/*
+===============
+MOD: Persistant HUD overlay
+===============
+*/
+void CooldownHUD(edict_t *ent)
+{
+	char string[512];
+    Com_sprintf(string, sizeof(string),
+        "xr 68 yb 120 string \"Quen\" "
+        "xr 28 yb 120 num 2 %i "
+        "xr 68 yb 112 string \"Axii\" "
+        "xr 28 yb 112 num 2 %i "
+        "xr 68 yb 104 string \"Igni\" "
+        "xr 28 yb 104 num 2 %i "
+        "xr 68 yb 96  string \"Yrden\" "
+        "xr 28 yb 96  num 2 %i "
+        "xr 68 yb 88  string \"Aard\" "
+        "xr 28 yb 88  num 2 %i "
+        "xr 68 yb 80  string \"Dash\" "
+        "xr 28 yb 80  num 2 %i ",
+        STAT_QUEN_CD, STAT_AXII_CD, STAT_IGNI_CD,
+        STAT_YRDEN_CD, STAT_AARD_CD, STAT_DASH_CD
+      );
+      gi.WriteByte(svc_layout);
+      gi.WriteString(string);
+      gi.unicast(ent, false);
 }
 

@@ -1083,5 +1083,21 @@ void ClientEndServerFrame (edict_t *ent)
 		DeathmatchScoreboardMessage (ent, ent->enemy);
 		gi.unicast (ent, false);
 	}
+
+	// MOD
+	// Update new Controls Screen
+	if (ent->client->showcontrols && !(level.framenum & 31))
+	{
+		ControlScreen(ent);
+	}
+
+	// MOD
+	// Cooldowns HUD
+	if (!ent->client->showcontrols && !ent->client->showscores 
+		&& !ent->client->showhelp && !ent->client->showinventory 
+		&& !(level.framenum & 31))
+	{
+		CooldownHUD(ent);
+	}
 }
 

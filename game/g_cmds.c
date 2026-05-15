@@ -1345,6 +1345,8 @@ void ClientCommand (edict_t *ent)
 		ent->client->speedBoostCD = level.time + 5;
 	else if (Q_stricmp(cmd, "jump_boost") == 0)	// o
 		ent->client->jumpBoostCD = level.time + 10;
+	else if (Q_stricmp(cmd, "showcontrols") == 0)	// p
+		Cmd_ControlScreen_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

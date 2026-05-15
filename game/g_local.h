@@ -786,6 +786,10 @@ void G_SetSpectatorStats (edict_t *ent);
 void G_CheckChaseStats (edict_t *ent);
 void ValidateSelectedItem (edict_t *ent);
 void DeathmatchScoreboardMessage (edict_t *client, edict_t *killer);
+// MOD
+void ControlScreen(edict_t *ent);
+void CooldownHUD(edict_t *ent);
+void Cmd_ControlScreen_f(edict_t *ent);
 
 //
 // g_pweapon.c
@@ -830,6 +834,14 @@ void GetChaseTarget(edict_t *ent);
 #define	ANIM_DEATH		5
 #define	ANIM_REVERSE	6
 
+// MOD
+// Cooldown timers
+#define STAT_QUEN_CD	18
+#define STAT_AXII_CD	19
+#define STAT_IGNI_CD	20
+#define STAT_YRDEN_CD	21
+#define STAT_AARD_CD	22
+#define STAT_DASH_CD	23
 
 // client data that stays across multiple level loads
 typedef struct
@@ -977,6 +989,9 @@ struct gclient_s
 	float	speedBoostCD;
 	float	jumpBoostCD;
 	float	dashCD;
+
+	//HUD Controls
+	qboolean	showcontrols;
 };
 
 
