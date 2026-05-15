@@ -1646,8 +1646,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		// Speed boost
 		if (ent->client->speedBoostCD > level.time)
 		{
-			ent->velocity[0] *= 1.5;
-			ent->velocity[1] *= 1.5;
+			ent->velocity[0] *= 1.1;
+			ent->velocity[1] *= 1.1;
 		}
 
 		// MOD
@@ -1656,7 +1656,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		{
 			if (ent->velocity[2] > 0 && ent->client->oldvelocity[2] <= 0)
 			{
-				ent->velocity[2] *= 1.5;
+				ent->velocity[2] *= 1.1;
 			}
 		}
 

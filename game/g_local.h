@@ -906,7 +906,7 @@ struct gclient_s
 
 	qboolean	weapon_thunk;
 
-	gitem_t		*newweapon;
+	gitem_t* newweapon;
 
 	// sum up damage over an entire frame, so
 	// shotgun blasts give a single big kick
@@ -962,7 +962,7 @@ struct gclient_s
 
 	float		respawn_time;		// can respawn when time > this
 
-	edict_t		*chase_target;		// player we are chasing
+	edict_t* chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
 
 	// MOD
@@ -976,7 +976,7 @@ struct gclient_s
 	// Movement Cooldowns
 	float	speedBoostCD;
 	float	jumpBoostCD;
-	float	dashCD;	
+	float	dashCD;
 };
 
 

@@ -1137,7 +1137,7 @@ MOD: Forward Dash
 */
 void ForwardDash (edict_t *ent)
 {
-	vect3_t forward;
+	vec3_t forward;
 
 	if (ent->client->dashCD > level.time)
 	{
@@ -1164,7 +1164,7 @@ MOD: Left Dash
 */
 void LeftDash (edict_t *ent)
 {
-	vect3_t right;
+	vec3_t right;
 
 	if (ent->client->dashCD > level.time)
 	{
@@ -1191,7 +1191,7 @@ MOD: Right Dash
 */
 void RightDash (edict_t *ent)
 {
-	vect3_t right;
+	vec3_t right;
 	
 	if (ent->client->dashCD > level.time)
 	{
@@ -1218,7 +1218,7 @@ MOD: Long Dash
 */
 void LongDash (edict_t *ent)
 {
-	vect3_t forward;
+	vec3_t forward;
 
 	if (ent->client->dashCD > level.time)
 	{
@@ -1342,9 +1342,9 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp(cmd, "long_dash") == 0)	// e
 		LongDash(ent);
 	else if (Q_stricmp(cmd, "speed_boost") == 0)	// i
-		ent->client->speedBoostCD = level.time + 10;
+		ent->client->speedBoostCD = level.time + 5;
 	else if (Q_stricmp(cmd, "jump_boost") == 0)	// o
-		ent->client->jumpBoostCD = level.time + 10;;
+		ent->client->jumpBoostCD = level.time + 10;
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
